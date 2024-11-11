@@ -35,11 +35,11 @@ async function updateTask(id, description) {
 }
 
 // Toggle task completion in the backend
-async function toggleTaskCompletion(id) {
+async function toggleTaskCompletion(id, completed) {
   const tasks = await fetchTasks();
   const task = tasks.find((task) => task.id === parseInt(id));
   if (task) {
-    await fetch(`${serverURL}/update-description`, {
+    await fetch(`${serverURL}/update-completed`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({

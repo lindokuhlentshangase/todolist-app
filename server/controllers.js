@@ -28,12 +28,31 @@ import pool from "./db.js";
 
 
 // Update an existing task's description
- const updateTask = async (req, res) => {
-  const { id, description, completed } = req.body;
+const updateTask = async (req, res) => {
+  const { id, description} = req.body;
   try {
     const result = await pool.query(
-      "UPDATE tasks SET description = $1, completed = $2 WHERE id = $3 RETURNING *",
-      [description, completed, id]
+      "UPDATE tasks SET description = $1 WHERE id = $2 RETURNING *",
+      [description, id]
+    );
+
+    if (result.rowCount === 0) {
+      res.status(404).send("Task not found");
+    } else {
+      res.json(result.rows[0]);
+    }
+  } catch (err) {
+    console.error("Error updating data:", err);
+    res.status(500).send("Error updating data");
+  }
+};
+
+const updateToggleCompletion = async (req, res) => {
+  const { id, completed} = req.body;
+  try {
+    const result = await pool.query(
+      "UPDATE tasks SET completed = $1 WHERE id = $2 RETURNING *",
+      [completed, id,]
     );
 
     if (result.rowCount === 0) {
@@ -64,4 +83,4 @@ import pool from "./db.js";
   }
 };
 
-export { checkConnection, addTask, updateTask, deleteTask}
+export { checkConnection, addTask, updateTask,updateToggleCompletion, deleteTask}
